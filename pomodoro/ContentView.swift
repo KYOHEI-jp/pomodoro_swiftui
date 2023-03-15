@@ -48,7 +48,11 @@ struct ContentView: View {
             }) {
                 Image(systemName: "gear")
             })
-            .sheet(isPresented: $showingSettings) {
+            .sheet(isPresented: $showingSettings, onDismiss: {
+                if isWorking {
+                    timeRemaining = workDuration
+                }
+            }) {
                 SettingsView(workDuration: $workDuration)
             }
         }
