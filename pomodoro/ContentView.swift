@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var workDuration = 1500
     @State private var showingSettings = false
+    @State private var timerRunning = false
 
     var body: some View {
         NavigationView {
@@ -27,11 +28,13 @@ struct ContentView: View {
 
                 HStack {
                     Button("Start") {
+                        timerRunning = true
                         timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
                     }
                     .padding()
 
                     Button("Stop") {
+                        timerRunning = false
                         timer.upstream.connect().cancel()
                     }
                     .padding()
@@ -54,6 +57,16 @@ struct ContentView: View {
                 }
             }) {
                 SettingsView(workDuration: $workDuration)
+            }
+            .onReceive(timer) { _ in
+                if timerRunning && timeRemaining > 0 {
+                    timeRemaining -= 1
+                } else if timeRemaining == 0 {
+                    timerRunning = false
+                    isWorking.toggle()
+                    resetTimer()
+                    timer.upstream.connect().cancel()
+                }
             }
         }
     }
