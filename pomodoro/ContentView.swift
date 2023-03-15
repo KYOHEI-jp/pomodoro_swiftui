@@ -11,50 +11,54 @@ struct ContentView: View {
     @State private var timeRemaining = 1500
     @State private var isWorking = true
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var workDuration = 1500
+    @State private var showingSettings = false
 
     var body: some View {
-        VStack {
-            Text(isWorking ? "Work" : "Break")
-                .font(.largeTitle)
-                .padding()
+        NavigationView {
+            VStack {
+                Text(isWorking ? "Work" : "Break")
+                    .font(.largeTitle)
+                    .padding()
 
-            Text("\(timeRemaining / 60):\(timeRemaining % 60 < 10 ? "0" : "")\(timeRemaining % 60)")
-                .font(.system(size: 60))
-                .padding()
+                Text("\(timeRemaining / 60):\(timeRemaining % 60 < 10 ? "0" : "")\(timeRemaining % 60)")
+                    .font(.system(size: 60))
+                    .padding()
 
-            HStack {
-                Button("Start") {
-                    timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                HStack {
+                    Button("Start") {
+                        timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                    }
+                    .padding()
+
+                    Button("Stop") {
+                        timer.upstream.connect().cancel()
+                    }
+                    .padding()
                 }
-                .padding()
 
-                Button("Stop") {
-                    timer.upstream.connect().cancel()
+                Button("Reset") {
+                    resetTimer()
                 }
                 .padding()
             }
-
-            Button("Reset") {
-                resetTimer()
-            }
-            .padding()
-        }
-        .onReceive(timer) { _ in
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                isWorking.toggle()
-                resetTimer()
-                timer.upstream.connect().cancel()
+            .navigationBarTitle("Pomodoro Timer")
+            .navigationBarItems(trailing: Button(action: {
+                showingSettings = true
+            }) {
+                Image(systemName: "gear")
+            })
+            .sheet(isPresented: $showingSettings) {
+                SettingsView(workDuration: $workDuration)
             }
         }
     }
 
     private func resetTimer() {
         if isWorking {
-            timeRemaining = 1500 // 25 minutes in seconds
+            timeRemaining = workDuration
         } else {
-            timeRemaining = 300 // 5 minutes in seconds
+            timeRemaining = 300
         }
     }
 }
@@ -64,4 +68,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
