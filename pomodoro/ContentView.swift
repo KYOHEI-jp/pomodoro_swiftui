@@ -41,10 +41,16 @@ struct ContentView: View {
                     .padding()
                 }
 
-                Button("Reset") {
-                    resetTimer()
+                HStack {
+                    Text("Set: \(timerCount)")
+                        .font(.headline)
+                        .padding()
+
+                    Button("Reset") {
+                        resetTimer()
+                    }
+                    .padding()
                 }
-                .padding()
             }
             .navigationBarTitle("Pomodoro Timer")
             .navigationBarItems(trailing: Button(action: {
@@ -85,8 +91,7 @@ struct ContentView: View {
         if isWorking {
             timeRemaining = workDuration
         } else {
-            // 休憩時間
-            timeRemaining = 10
+            timeRemaining = 1
         }
     }
 }
