@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var workDuration = 1500
     @State private var showingSettings = false
     @State private var timerRunning = false
+    @State private var timerCount = 0
 
     var body: some View {
         NavigationView {
@@ -66,6 +67,15 @@ struct ContentView: View {
                     isWorking.toggle()
                     resetTimer()
                     timer.upstream.connect().cancel()
+
+                    if isWorking {
+                        timerCount += 1
+                    }
+                    
+                    if timerCount == 5 {
+                        timerCount = 0
+                        timer.upstream.connect().cancel()
+                    }
                 }
             }
         }
@@ -75,7 +85,8 @@ struct ContentView: View {
         if isWorking {
             timeRemaining = workDuration
         } else {
-            timeRemaining = 300
+            // 休憩時間
+            timeRemaining = 10
         }
     }
 }
