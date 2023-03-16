@@ -16,7 +16,7 @@ struct SettingsView: View {
             Form {
                 Section(header: Text("Work Duration")) {
                     Picker("Work Duration", selection: $workDuration) {
-                        Text("5 minutes").tag(300)
+                        Text("1 minutes").tag(5)
                         Text("10 minutes").tag(600)
                         Text("15 minutes").tag(900)
                         Text("20 minutes").tag(1200)
